@@ -5,12 +5,9 @@ namespace React.Ecom.API.Services.Service
     public class BlobService : IBlobService
     {
         private readonly string _rootpath;
-        private readonly IWebHostEnvironment _environment;
-
-        public BlobService(IWebHostEnvironment environment)
+        public BlobService()
         {
-            _environment = environment;
-            _rootpath = Path.Combine(_environment.WebRootPath,SD.SD_Storage_Container);
+            _rootpath = Path.Combine(SD.SD_Storage_Container);
             if (!Directory.Exists(_rootpath))
             {
                 Directory.CreateDirectory(_rootpath);
