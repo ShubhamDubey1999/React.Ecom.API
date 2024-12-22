@@ -38,20 +38,30 @@ namespace React.Ecom.API.Controllers
             StripeConfiguration.ApiKey = _configuration["StripeSettings:SecretKey"];
             shoppingCart.CartTotal = shoppingCart.CartItems.Sum(u => u.Quantity * u.MenuItem.Price);
 
+            // Create a description for the export transaction (you can customize this)
+            string exportDescription = "Export transaction for online goods/services"; // Add detailed description of goods/services exported
+
             PaymentIntentCreateOptions options = new()
             {
                 Amount = (int)(shoppingCart.CartTotal * 100),
                 Currency = "inr",
                 PaymentMethodTypes = new List<string>
-                  {
+                {
                     "card",
-                  },
+                },
+                Description = exportDescription,  // Add the description for export
+                Metadata = new Dictionary<string, string>
+                {
+                    { "export_description", exportDescription }  // Store export description in metadata
+                }
             };
+
             PaymentIntentService service = new();
             PaymentIntent response = service.Create(options);
             shoppingCart.StripePaymentIntentId = response.Id;
             shoppingCart.ClientSecret = response.ClientSecret;
             #endregion
+
             _response.StatusCode = System.Net.HttpStatusCode.OK;
             _response.IsSuccess = true;
             _response.Result = shoppingCart;
